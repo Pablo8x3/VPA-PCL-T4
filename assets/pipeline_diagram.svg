@@ -1,0 +1,76 @@
+<svg viewBox="0 0 1180 480" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L8,3 z" fill="#64748b"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="1180" height="480" fill="#0f172a" rx="14"/>
+
+  <text x="40" y="46" font-size="22" font-weight="700" fill="#f8fafc">Vehicle Speed Estimation — Processing Pipeline</text>
+  <text x="40" y="68" font-size="13" fill="#94a3b8">Per-frame flow, as implemented in main.py / generar_video.py</text>
+
+  <!-- TOP ROW: main flow, 5 boxes -->
+  <!-- 1 -->
+  <rect x="40" y="110" width="190" height="130" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <text x="135" y="140" font-size="14" font-weight="600" fill="#e2e8f0" text-anchor="middle">1. Video Frame</text>
+  <text x="135" y="165" font-size="11" fill="#94a3b8" text-anchor="middle">cv2.VideoCapture</text>
+  <text x="135" y="183" font-size="11" fill="#94a3b8" text-anchor="middle">1920x1080</text>
+  <text x="135" y="201" font-size="11" fill="#94a3b8" text-anchor="middle">street-level, fixed camera</text>
+
+  <path d="M232,175 L262,175" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 2 -->
+  <rect x="266" y="100" width="210" height="150" rx="10" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="371" y="130" font-size="14" font-weight="600" fill="#eff6ff" text-anchor="middle">2. Detect + Track</text>
+  <text x="371" y="155" font-size="11" fill="#93c5fd" text-anchor="middle">YOLOv8n (ultralytics)</text>
+  <text x="371" y="173" font-size="11" fill="#93c5fd" text-anchor="middle">class=car · conf &gt; 0.40</text>
+  <text x="371" y="191" font-size="11" fill="#93c5fd" text-anchor="middle">tracker: BoT-SORT</text>
+  <text x="371" y="209" font-size="11" fill="#93c5fd" text-anchor="middle">→ persistent track ID</text>
+
+  <path d="M478,175 L508,175" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 3 -->
+  <rect x="512" y="110" width="190" height="130" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <text x="607" y="140" font-size="14" font-weight="600" fill="#e2e8f0" text-anchor="middle">3. Centroid History</text>
+  <text x="607" y="165" font-size="11" fill="#94a3b8" text-anchor="middle">bbox → centroid_x</text>
+  <text x="607" y="183" font-size="11" fill="#94a3b8" text-anchor="middle">last 2 frames kept</text>
+  <text x="607" y="201" font-size="11" fill="#94a3b8" text-anchor="middle">per track_id</text>
+
+  <path d="M704,175 L734,175" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 4 -->
+  <rect x="738" y="95" width="210" height="160" rx="10" fill="#3b2410" stroke="#d97706" stroke-width="1.5"/>
+  <text x="843" y="125" font-size="14" font-weight="600" fill="#fef3c7" text-anchor="middle">4. Direction Filter</text>
+  <text x="843" y="150" font-size="11" fill="#fcd34d" text-anchor="middle">Δx &gt; 0 required</text>
+  <text x="843" y="168" font-size="11" fill="#fcd34d" text-anchor="middle">(left→right lane only)</text>
+  <text x="843" y="186" font-size="11" fill="#fcd34d" text-anchor="middle">≥ 10 consecutive frames</text>
+  <text x="843" y="204" font-size="11" fill="#fcd34d" text-anchor="middle">else counter resets to 0</text>
+  <text x="843" y="226" font-size="10" fill="#b45309" text-anchor="middle">debounces jitter / stopped cars</text>
+
+  <path d="M950,175 L980,175" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 5 -->
+  <rect x="984" y="100" width="156" height="150" rx="10" fill="#0f2e21" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="1062" y="128" font-size="14" font-weight="600" fill="#dcfce7" text-anchor="middle">5. Speed</text>
+  <text x="1062" y="151" font-size="10.5" fill="#86efac" text-anchor="middle">Δx_px / Δt → px/s</text>
+  <text x="1062" y="169" font-size="10.5" fill="#86efac" text-anchor="middle">÷ px-per-meter</text>
+  <text x="1062" y="187" font-size="10.5" fill="#86efac" text-anchor="middle">→ m/s → km/h</text>
+  <text x="1062" y="209" font-size="10.5" fill="#86efac" text-anchor="middle">drop if &lt; 2.0 km/h</text>
+
+  <!-- BOTTOM ROW: calibration feeding into speed, and output -->
+  <path d="M1062,350 L1062,254" stroke="#64748b" stroke-width="2" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
+  <rect x="954" y="352" width="216" height="82" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <text x="1062" y="378" font-size="12.5" font-weight="600" fill="#e2e8f0" text-anchor="middle">One-time calibration</text>
+  <text x="1062" y="399" font-size="10.5" fill="#94a3b8" text-anchor="middle">reference line measured by hand</text>
+  <text x="1062" y="416" font-size="10.5" fill="#94a3b8" text-anchor="middle">(bus-lane posts, 22.5 m real distance)</text>
+
+  <path d="M843,255 L843,300 L340,300 L340,352" stroke="#64748b" stroke-width="1.5" fill="none" marker-end="url(#arrow)"/>
+
+  <rect x="40" y="354" width="600" height="80" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <text x="340" y="380" font-size="13" font-weight="600" fill="#e2e8f0" text-anchor="middle">6. Overlay &amp; Output</text>
+  <text x="340" y="401" font-size="11" fill="#94a3b8" text-anchor="middle">bounding box + track ID + speed readout bar</text>
+  <text x="340" y="419" font-size="11" fill="#94a3b8" text-anchor="middle">main.py → live cv2.imshow only  ·  generar_video.py → also writes an .mp4 (near-duplicate script)</text>
+
+  <text x="40" y="463" font-size="11" fill="#64748b">Loop repeats every frame · no perspective/homography correction applied · calibration is tied to this one camera position</text>
+</svg>
